@@ -1,0 +1,559 @@
+openapi: 3.0.3
+x-info: Anything that has an x- is treated as a custom field.
+info: 
+  title: EasyShop Products API
+  description: |
+    # About Us
+    ***EasyShop*** is a fictional online market retailer. Any website can list our products by using our _APIs_. Shipping and logistics will be handled by our `trained rats`. Don't worry, all of our `rats` have at least a high school education.
+    # Categories Supported
+      - Sorrow
+      - **THE LOCUSTS**
+      - 2008 MacBooks
+      - Micro USB cables with connectors that don't stay in properly
+  termsOfService: https://scrungus.club
+  x-custom-info:
+    comment: Some comments
+    developers:
+      - name: This text doesn't show up in the swagger ui. :(
+        email: text@text.text
+      - name: Ea Nasir
+        email: eanasir@finecopper.claytablets
+  contact:
+    name: Gungle Stimpston
+    url: https://scrungus.club
+    email: gungle@sludge.bog
+  license:
+    name: EasyShop Liscense Information
+    url: https://scrungus.club
+  version: 0.0.1
+externalDocs:
+  description: External Documentation
+  url: https://scrungus.club
+servers:
+  - url: https://burger.gov
+    description: burger.gov
+  - url: https://cultof.grungle
+    description: the cult of grungle :)
+  - url: https://{username}.server.com:{port}/{version}
+    variables:
+      username:
+        default: demo
+        description: This value is set by the service provider.
+      port:
+        default: "8443"
+        enum:
+          - "8443"
+          - "443"
+      version:
+        default: v1
+tags:
+  - name: Categories
+    description: Categories-related operations
+  - name: Products
+    description: Products-related operations
+  - name: Orders
+    description: Orders-related operations
+  - name: Grungle :)
+    description: Grungle-related operations (rolling crits)
+security:
+  - basicAuth: []
+  - bearerAuth: []
+  - apiKeyAuth: []
+paths:
+  /categories:
+    get:
+      tags:
+        - Categories
+      summary: List all categories
+      description: Returns the list of categories supported by EasyShop
+      operationId: getCategories
+      parameters: 
+        - name: categoryId
+          in: query
+          schema:
+            type: integer
+            minimum: 100
+            maximum: 1000
+          examples:
+            phones:
+              value: 101
+            rats:
+              value: 102
+            "2008 MacBooks":
+              value: 103
+            "Micro USB cables with connectors that don't stay in properly":
+              value: 104
+      responses:
+        "200":
+          description: Describes the response code. If 200, return all categories.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/category"
+              examples:
+                all-categories-data:
+                  summary: Categories example data
+                  value:
+                    - categoryId: 101
+                      name: Phones
+                    - categoryId: 102
+                      name: THE LOCUSTS
+                    - categoryId: 103
+                      name: "2008 MacBooks"
+                    - categoryId: 104
+                      name: "Micro USB cables with connectors that don't stay in properly"
+                single-category-data:
+                  summary: Single category example data
+                  value:
+                    - categoryId: 101
+                      name: Phones
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+                  
+  /categories/{category_id}:
+    get:
+      tags:
+        - Categories
+      summary: Return a specific category
+      description: Return the specific category provided by the request path
+      operationId: getCategoryDetails
+      parameters:
+        - name: category_id
+          in: path
+          schema:
+            type: integer
+            minimum: 100
+            maximum: 1000
+          required: true
+          example: 101
+      responses:
+        "200":
+          description: Path hit.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/category"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+                  
+  /grungle:
+    patch:
+      tags:
+        - Grungle :)
+      summary: Grungle :)
+      description: Grungle :) he will stun you and deal 10AP damage.
+      operationId: structureYou
+      responses:
+        "404":
+          description: 404, no grungle found :(
+          content:
+            application/json: 
+              schema:
+                type: string
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+                  
+  /products:
+    get:
+      tags:
+        - Products
+      summary: Gets a list of all products.
+      operationId: getProducts
+      parameters: 
+        - name: categoryId
+          in: query
+          schema:
+            type: integer
+            minimum: 100
+            maximum: 1000
+          example: 101
+      responses:
+        "200":
+          description: Returning products...
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/product"
+              examples:
+                products-data:
+                  summary: Products example data
+                  value:
+                    - productId: 101
+                      name: Garfield Phone
+                      price: 25000.99
+                      categoryName: Phones
+                      quantity: 1
+                    - productId: 102
+                      name: Nokia 3310
+                      price: 5.50
+                      categoryName: Phones
+                      quantity: 12
+                    - productId: 103
+                      name: OnePlus 10 Pro 5G
+                      price: 750.00000001
+                      categoryName: Phones
+                      quantity: 67
+                      
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+                  
+  /products/{productId}:
+    get:
+      tags:
+        - Products
+      summary: Get a specific product, according to the path provided.
+      operationId: getProductDetails
+      parameters:
+        - name: productId
+          in: path
+          schema:
+            type: integer
+          required: true
+          example: 871256
+      responses:
+        "200":
+          description: Returning product...
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/product"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+                  
+  /orders:
+    post:
+      tags:
+        - Orders
+      summary: Create Order
+      description: |
+        Create order for EasyShop shipping to handle.
+      operationId: createOrderDetails
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                orderId:
+                  type: integer
+                products:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/product"
+                address:
+                    $ref: "#/components/schemas/address"
+      responses:
+        "201": 
+          description: Order created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  orderId:
+                    type: integer
+          links:
+            getOrderByOrderId:
+              $ref: '#/components/links/getOrderByOrderId'
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+                  
+    put:
+      tags:
+        - Orders
+      summary: Update Order
+      description: |
+        Update order details to Eazyshop for 
+        processing and shipping
+      operationId: updateOrderDetails
+      requestBody:
+        content:
+          applications/json:
+            schema:
+              type: object
+              properties:
+                orderId:
+                  type: integer
+                products:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/product"
+                address:
+                    $ref: "#/components/schemas/address"
+      responses:
+        "200": 
+          description: Order details updated successfully
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+                  
+    delete:
+      tags:
+        - Orders
+      summary: Delete order
+      description: Delete order details from EasyShop
+      operationId: deleteOrderDetails 
+      parameters:
+        - $ref: "#/components/parameters/orderIdQueryParam"
+      responses:
+        "204":
+          description: Order deleted successfully
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+                  
+    get:
+      tags:
+        - Orders
+      summary: Return orders
+      operationId: getOrderDetails
+      parameters: 
+        - $ref: "#/components/parameters/orderIdQueryParam"
+      responses:
+        "200":
+          description: Returning Order...
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  orderId:
+                    type: integer
+                  products:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/product"
+                  address:
+                    $ref: "#/components/schemas/address"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /orders/{orderId}:
+    get:
+      tags:
+        - Orders
+      summary: Return orders
+      operationId: getOrderDetailsUsingPathParam
+      deprecated: true
+      parameters: 
+        - $ref: "#/components/parameters/orderIdPathParam"
+      responses:
+        "200":
+          description: Returning Order...
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  orderId:
+                    type: integer
+                  products:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/product"
+                  address:
+                    $ref: "#/components/schemas/address"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /oneOfOrder:
+    post:
+      tags:
+        - Orders
+      summary: oneOf demo
+      operationId: demoOfOneOf
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                products:
+                  type: object
+                  oneOf:
+                    - $ref: "#/components/schemas/phone"
+                    - $ref: "#/components/schemas/laptop"
+                address:
+                  $ref: '#/components/schemas/address'
+              required:
+                - products
+                - address
+      responses:
+        '200':
+          description: Order placed successfully
+  /anyOfOrder:
+    get:
+      tags:
+      - Orders
+      summary: Get order details
+      description: Get order details based on order id
+      operationId: demoOfAnyOf
+      parameters:
+        - $ref: "#/components/parameters/orderIdQueryParam"
+        - name: fetchType
+          in: query
+          required: true
+          schema:
+            type: string
+            enum:
+              - summary
+              - details
+          description: >
+            Fetch Type:
+              * `summary` - Will provide Order Summary
+              * `details` - Will provide Order Summary & Order Address
+      responses:
+        '200':
+          description: Return product details
+          content:
+            application/json:
+              schema:
+                anyOf:
+                  - $ref: '#/components/schemas/orderSummary'
+                  - $ref: '#/components/schemas/orderAddress'
+              
+components:
+  parameters:
+    orderIdQueryParam:
+      name: orderId
+      in: query
+      required: true
+      schema:
+        type: integer
+    orderIdPathParam:
+      name: orderId
+      in: path
+      required: true
+      schema:
+        type: integer
+  schemas:
+    address:
+      type: object
+      properties:
+        addressLine:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+          enum:
+            - California
+            - Massachusetts
+            - New Hampshire
+            - New York
+            - Connecticut
+        zipcode:
+          type: string
+        isOfficeAddress:
+          type: boolean
+      required: [addressLine, city, state, zipcode]
+    product:
+      type: object
+      properties:
+        productId: 
+          type: integer
+        name:
+          type: string
+        price: 
+          type: number
+          format: float
+        categoryName:
+          type: string
+          nullable: true
+        releaseDate:
+          type: string
+          format: date
+          readOnly: true
+        quantity:
+          type: integer
+          description: |
+            ***Quantity*** represents `stock` value when this field is being sent by EasyShop. Where as in the scenarios of consumer sending this field, it represents `number of product items` inside the order. Consumers are expected to handle the scenario of stopping the end user <u>*when the stock value is 0*</u>
+    category:
+      type: object
+      properties:
+        categoryId:
+          type: integer
+        name:
+          type: string
+    phone:
+      allOf:
+        - $ref: "#/components/schemas/product"
+        - type: object
+          properties:
+            networkType:
+              type: string
+              enum:
+                - 4G
+                - 5G
+          required: [networkType]
+    laptop:
+      allOf:
+        - $ref: "#/components/schemas/product"
+        - type: object
+          properties:
+            ram:
+              type: string
+              enum:
+                - 8 GB
+                - 16 GB
+                - 32 GB
+                - 64 GB
+            cpu:
+              type: string
+              enum:
+                - Intel Core i3
+                - Intel Core i5
+                - Intel Core i7
+                - Intel Core i9
+          required: [ram, cpu]
+    orderSummary:
+      type: object
+      properties:
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/product'
+    orderAddress:
+      type: object
+      properties:
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/address'
+  responses:
+    InternalServerError:
+      description: |
+        An error occured while processing your request. Please contact the swarm of rats for help.
+  links:
+    getOrderByOrderId:
+      description: >
+        The `orderId` value returned in the response can be used as an input parameter in `GET /orders`.
+      operationId: getProductDetails
+      parameters:
+        orderId: '$response.body#/orderId'
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+    oAuth2Auth:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://scrungus.club/oauth/authorize
+          tokenUrl: https://scrungus.club/api/oauth.access
+          scopes:
+            read: Read only access
+            write: Read Write access
+            admin: Admin access
+        
+        
+        
+        
